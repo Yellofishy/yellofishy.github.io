@@ -1,3 +1,60 @@
-<div class="header">
-  <h1>Official Website of Kro'meagh</h1>
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+body {
+  margin: 0;
+  font-family: Calibri;
+}
+
+
+.header {
+  padding: 10px 16px;
+  background: #f1f1f1;
+  color: #000000;
+}
+
+.content {
+  padding: 16px;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.sticky + .content {
+  padding-top: 102px;
+}
+</style>
+</head>
+<body>
+
+
+
+<div class="header" id="myHeader">
+  <h1 style=text-align:center;>Government of Kro'meagh</h1>
 </div>
+
+<div class="content">
+  <h2> :flushed: </h2> 
+
+<script>
+window.onscroll = function() {myFunction()};
+
+var header = document.getElementById("myHeader");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky");
+  } else {
+    header.classList.remove("sticky");
+  }
+}
+</script>
+</body>
+</html>
