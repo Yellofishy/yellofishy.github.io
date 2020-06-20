@@ -65,3 +65,39 @@ a:hover {
 </style>
 </head>
 <body>
+
+<div class="header" id="myHeader">
+  <a href="kro.html">
+  <img src="../images/banner.png" width="191" height="28">
+<a href="../kro.html">Home</a>
+<a class="active">News</a>
+<a href="#contact">Information</a>
+<a href="#about">Kro'meagh Industries</a>
+<a href="https://discord.gg/G2TAnQb">Discord</a>
+<a href="../../404.html">404</a>
+</a>
+</div>
+
+<div class="contentmain">
+<h1 style="text-align: center"> The official website of the Government of Kro'meagh </h1>
+  <img src="../images/lectern.png" width="500" height="300">
+  <h1 style="color:black;text-align: center;font-size: 30px"> News </h1>
+</div>
+
+
+<script>
+window.onscroll = function() {myFunction()};
+
+var header = document.getElementById("myHeader");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky");
+  } else {
+    header.classList.remove("sticky");
+  }
+}
+</script>
+</body>
+</html>
