@@ -71,6 +71,16 @@ a:hover {
   height: 300px;
 }
 
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 5px;
+  text-align: left;
+}
+
 </style>
 </head>
 <body>
@@ -96,11 +106,35 @@ a:hover {
 <div class="row">
   <div class="column" style="background-color:#aaa;">
     <h1 style="text-align: center">Articles</h2>
-    <p>Some text..</p>
+
+<table style="width: 100%">
+  <tr>
+    <th>Article Name</th>
+    <th>Date (MMDDYYYY)</th>
+  </tr>
+</table>
+
   </div>
   <div class="column" style="background-color:#bbb;">
     <h1 style="text-align: center">Decisions</h1>
-    <p>Some text..</p>
+    <table style="width: 100%">
+  <tr>
+    <th>Decision</th>
+    <th>Pass Rate (Aye-Abstain-Nay)</th>
+    <th>Date (MMDDYYYY)</th>
+  </tr>
+  <tr>
+    <td style="color:black"><a href="statements/decision2.pdf" download style="color:black">#2 - Neutrality Stance</a></td>
+    <td>4-3-0</td>
+    <td>06/19/2020</td>
+  </tr>
+  <tr>
+    <td><a href="statements/decision1.pdf" download style="color:black">#1 - Recognition of Krondia</a></td>
+    <td>NA</td>
+    <td>06/15/2020</td>
+  </tr>
+</table>
+
   </div>
 </div>
 
