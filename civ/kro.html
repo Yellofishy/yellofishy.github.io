@@ -60,6 +60,33 @@ a:hover {
   text-decoration: underline;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 5px;
+  text-align: left;
+}
+
 </style>
 </head>
 <body>
@@ -79,13 +106,24 @@ a:hover {
 
 <div class="contentmain">
 <h1 style="text-align: center"> The official website of the Government of Kro'meagh </h1>
+
+<div class="row">
+  <div class="column" style="background-color:#ffffff;">
+<table style="width: 50%">
 <a href="kro/news.html">
   <img src="images/lectern.png" width="500" height="300">
   <h1 style="color:black;text-align: center;font-size: 30px"> News </h1>
+</table>
 
+  </div>
+  <div class="column" style="background-color:#ffffff;">
+    <table style="width: 50%">
 <a href="kro/info.html">
   <img src="images/kroev_flag.jpg" width="500" height="375">
   <h1 style="color:black;text-align: center;font-size: 30px"> Information </h1>
+</div>
+</table>
+</div>
 </div>
 
 <script>
