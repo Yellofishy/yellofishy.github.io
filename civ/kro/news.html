@@ -3,9 +3,10 @@
 <head>
 
 <style>
+
 body {
-  margin: 0;
-  font-family: Calibri;
+    margin: 0;
+    font-family: Calibri;
 }
 
 .header {
@@ -64,13 +65,11 @@ a:hover {
   display: flex;
 }
 
-
 .column {
   flex: 0%;
   padding: 10px;
   height: 300px;
 }
-
 
 table, th, td {
   border: 1px solid black;
@@ -87,44 +86,57 @@ th, td {
 <body>
 
 <div class="header" id="myHeader">
-  <a href="kro.html">
-  <img src="images/banner.png" width="191" height="28">
-<a class="active">Home</a>
-<a href="kro/news.html">News</a>
-<a href="kro/info.html">Information</a>
+  <a href="../kro.html">
+  <img src="../images/banner.png" width="191" height="28">
+<a href="../kro.html">Home</a>
+<a class="active">News</a>
+<a href="info.html">Information</a>
 <a href="#about">Kro'meagh Industries</a>
 <a href="https://discord.gg/G2TAnQb">Discord</a>
-<a href="../404.html">404</a>
+<a href="../../404.html">404</a>
 </a>
-
 </div>
 
 <div class="contentmain">
-<h1 style="text-align: center"> The official website of the Government of Kro'meagh </h1>
+<h1 style="text-align: center";> The official website of the Government of Kro'meagh </h1>
+  <img src="../images/lectern.png" width="500" height="300">
+  <h1 style="color:black;text-align: center;font-size: 30px">News</h1>
+</div>
 
 <div class="row">
-  <div class="column" style="background-color:#ffffff;">
-<table style="width: 100%">
-<a href="kro/news.html">
-  <img src="images/lectern.png" width="500" height="300">
-  <h1 style="color:black;text-align: center;font-size: 30px"> News </h1>
+  <div class="column" style="background-color:#aaa;">
+    <h1 style="text-align: center">Articles</h2>
 
+<table style="width: 100%">
+  <tr>
+    <th>Article Name</th>
+    <th>Date (MMDDYYYY)</th>
+  </tr>
 </table>
 
   </div>
-  <div class="column" style="background-color:#ffffff;">
+  <div class="column" style="background-color:#bbb;">
+    <h1 style="text-align: center">Decisions</h1>
     <table style="width: 100%">
-<a href="kro/info.html">
-  <img src="images/kroev_flag.jpg" width="500" height="375">
-  <h1 style="color:black;text-align: center;font-size: 30px"> Information </h1>
-</div>
+  <tr>
+    <th>Decision</th>
+    <th>Pass Rate (Aye-Abstain-Nay)</th>
+    <th>Date (MMDDYYYY)</th>
+  </tr>
+  <tr>
+    <td style="color:black"><a href="statements/decision2.pdf" download style="color:black">#2 - Neutrality Stance</a></td>
+    <td>4-3-0</td>
+    <td>06/19/2020</td>
+  </tr>
+  <tr>
+    <td><a href="statements/decision1.pdf" download style="color:black">#1 - Recognition of Krondia</a></td>
+    <td>NA</td>
+    <td>06/15/2020</td>
+  </tr>
 </table>
+
+  </div>
 </div>
-</div>
-
-
-
-
 
 
 
