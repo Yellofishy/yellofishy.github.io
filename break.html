@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<style>
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+#input {
+  padding: 12px 12px 6px;
+  margin: 20px 0 0 20px;
+  background-color: #85E0D5;
+  display: inline-block;
+}
+
+#output {
+  padding: 12px 12px 6px;
+  margin: 20px 0 0 20px;
+  background-color: #85E0D5;
+  display: inline-block;
+  vertical-align: top;
+}
+
+h1,
+h3 {
+  margin: 8px;
+}
+
+label.primary {
+  display: inline-block;
+  width: 41%;
+  margin-left: 5%;
+  text-align: right;
+}
+
+#submit_button,
+#result,
+small {
+  text-align: center;
+}
+
+#result {
+  font-size: 1.5em;
+}
+
+span,
+small {
+  display: block;
+}
+
+abbr {
+  cursor: help;
+}
+</style>
+<head>
+    <meta charset="utf-8">
+    <title>Block Break Times</title>
+    <meta name="author" content="Okx">
+    <link rel="stylesheet" type="text/css" href="/css/break.css">
+    <script src="/js/break.js" defer></script>
+    <meta name="viewport" content="width=device-width initial-scale=1">
+</head>
+<body>
+<div id="input">
+    <h1>Block Break Times</h1>
+    <p>
+        <label for="block_type" class="primary">Block Type:</label>
+        <select id="block_type" onchange="updateHash()">
+            <optgroup label="Pickaxe">
+                <option value="obsidian">Obsidian</option>
+                <option value="iron_door">Iron Door</option>
+                <option value="iron_bars">Iron Bars</option>
+                <option value="stone">Stone</option>
+                <option value="cobble">Cobblestone</option>
+                <option value="ender_chest">Ender Chest</option>
+                <option value="rail">Rail</option>
+            </optgroup>
+            <optgroup label="Axe">
+                <option value="wooden_door">Wooden Door</option>
+                <option value="chest">Chest</option>
+                <option value="sign">Sign</option>
+                <option value="jukebox">Jukebox</option>
+            </optgroup>
+            <option value="glass">Glass / Glass Pane</option>
+            <option value="beacon">Beacon</option>
+            <option value="sponge">Sponge</option>
+            <option value="hay_bale">Hay Bale</option>
+            <option value="nether_wart_block">Nether Wart Block</option>
+        </select>
+    </p>
+    <p>
+        <label for="rein" class="primary">Reinforcement:</label>
+        <select id="rein" onchange="updateHash()">
+            <option value="none">None (1)</option>
+            <optgroup label="CivUniverse">
+                <option value="cu_stone">Stone (50)</option>
+                <option value="cu_iron">Iron (300)</option>
+                <option value="cu_diamond">Diamond (1500)</option>
+            </optgroup>
+        </select>
+    </p>
+    <p>
+        <label class="primary">Tool:</label>
+
+        <label>
+            <input type="radio" id="tool_pickaxe" name="tool" value="pickaxe" onchange="updateHash()" checked>
+            Pickaxe
+        </label>
+        <label>
+            <input type="radio" id="tool_axe" name="tool" value="axe" onchange="updateHash()">
+            Axe
+        </label>
+    </p>
+    <p>
+        <label for="material" class="primary">Tool Material:</label>
+        <select id="material" onchange="updateHash()">
+            <option value="iron">Iron</option>
+            <option value="gold">Gold</option>
+            <option value="diamond" selected>Diamond</option>
+            <option value="netherite">Netherite</option>
+        </select>
+    </p>
+    <p>
+        <label for="eff" class="primary">Efficiency:</label>
+        <select id="eff" onchange="updateHash()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+    </p>
+    <p>
+        <label for="haste" class="primary">Haste:</label>
+        <select id="haste" onchange="updateHash()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </p>
+    <p>
+        <label for="mul" class="primary"><abbr title="Reinforcement multipliers: chests x2, iron doors x3">CR Multipliers</abbr>:</label>
+        <input type="checkbox" id="mul" name="mul" onchange="updateHash()">
+    </p>
+</div>
+<div id="output">
+    <h3>Block can be broken in:</h3>
+    <p id="result">
+
+    </p>
+    <small>assuming perfect TPS and 0 latency</small>
+</div>
+</body>
+</html>
+<script>
+const materials = [
+    // ["wood", 2],
+    // ["stone", 4],
+    ["gold", 12],
+    ["iron", 6],
+    ["diamond", 8],
+    ["netherite", 9],
+];
+const cr_multipliers = new Map([
+    ["chest", 2],
+    ["iron_door", 3]
+]);
+const rein = [
+    ["none", [1]],
+    ["cu_stone", [50, cr_multipliers]],
+    ["cu_iron", [300, cr_multipliers]],
+    ["cu_diamond", [1500, cr_multipliers]]
+];
+
+const blocks = [
+    {
+        "block": "obsidian",
+        "hardness": 50,
+        "tool": "pickaxe",
+        "material": "diamond"
+    },
+    {
+        "block": "iron_door",
+        "hardness": 5,
+        "tool": "pickaxe",
+        "material": "wood"
+    },
+    {
+        "block": "iron_bars",
+        "hardness": 5,
+        "tool": "pickaxe",
+        "material": "wood"
+    },
+    {
+        "block": "wooden_door",
+        "hardness": 3,
+        "tool": "axe",
+        "material": "wood"
+    },
+    {
+        "block": "chest",
+        "hardness": 2.5,
+        "tool": "axe",
+        "material": "wood"
+    },
+    {
+        "block": "stone",
+        "hardness": 1.5,
+        "tool": "pickaxe",
+        "material": "wood"
+    },
+    {
+        "block": "glass",
+        "hardness": 0.3
+    },
+    {
+        "block": "beacon",
+        "hardness": 4.5
+    },
+    {
+        "block": "sponge",
+        "hardness": 0.9
+    },
+    {
+        "block": "rail",
+        "hardness": 0.7,
+        "tool": "pickaxe",
+        "material": "wood"
+    },
+    {
+        "block": "sign",
+        "hardness": 1,
+        "tool": "axe",
+        "material": "wood"
+    },
+    {
+        "block": "ender_chest",
+        "hardness": 22.5,
+        "tool": "pickaxe",
+        "material": "wood"
+    },
+    {
+        "block": "hay_bale",
+        "hardness": 0.75
+    },
+    {
+        "block": "nether_wart_block",
+        "hardness": 1
+    },
+    {
+        "block": "cobble",
+        "hardness": 2,
+        "tool": "pickaxe",
+        "material": "wood"
+    },
+    {
+        "block": "jukebox",
+        "hardness": 2,
+        "tool": "axe",
+        "material": "wood"
+    }
+];
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+=';
+
+// binary to string lookup table
+const b2s = alphabet.split('');
+
+// string to binary lookup table
+// 123 == 'z'.charCodeAt(0) + 1
+const s2b = new Array(123);
+for (let i = 0; i < alphabet.length; i++) {
+    s2b[alphabet.charCodeAt(i)] = i;
+}
+
+// number to base64
+const ntob = (number) => {
+    if (number < 0) return `-${ntob(-number)}`;
+
+    let lo = number >>> 0;
+    let hi = (number / 4294967296) >>> 0;
+
+    let right = '';
+    while (hi > 0) {
+        right = b2s[0x3f & lo] + right;
+        lo >>>= 6;
+        lo |= (0x3f & hi) << 26;
+        hi >>>= 6;
+    }
+
+    let left = '';
+    do {
+        left = b2s[0x3f & lo] + left;
+        lo >>>= 6;
+    } while (lo > 0);
+
+    return left + right;
+};
+
+// base64 to number
+const bton = (base64) => {
+    let number = 0;
+    const sign = base64.charAt(0) === '-' ? 1 : 0;
+
+    for (let i = sign; i < base64.length; i++) {
+        number = number * 64 + s2b[base64.charCodeAt(i)];
+    }
+
+    return sign ? -number : number;
+};
+
+function getBlock(name) {
+    return blocks.find(block => block.block === name);
+}
+
+function canBreak(material, blockMaterial) {
+    if (blockMaterial === undefined) {
+        return true;
+    }
+    const mi = materials.findIndex(e => e[0] === material);
+    const bmi = materials.findIndex(e => e[0] === blockMaterial);
+
+    return mi >= bmi;
+}
+
+function isCorrectTool(blockTool, toolValue) {
+    if (blockTool === undefined) {
+        return true;
+    } else {
+        return blockTool === toolValue;
+    }
+}
+
+/*function updateHash() {
+    const blockName = document.getElementById("block_type").value;
+    const toolValue = document.querySelector("input[name=\"tool\"]:checked").value;
+    const toolMaterial = document.getElementById("material").value;
+    const efficiency = document.getElementById("eff").value;
+    const haste = document.getElementById("haste").value;
+    const reinforcement = document.getElementById("rein").value;
+    const mul = document.getElementById("mul").checked;
+
+    window.location.hash = "type=" + blockName + ",tool=" + toolValue + ",mat=" + toolMaterial
+        + ",rein=" + reinforcement + ",eff=" + efficiency + ",ha=" + haste + ",mul=" + (mul ? 1 : 0);
+}*/
+
+function onClick() {
+    const blockName = document.getElementById("block_type").value;
+    const toolValue = document.querySelector("input[name=\"tool\"]:checked").value;
+    const toolMaterial = document.getElementById("material").value;
+    const efficiency = document.getElementById("eff").value;
+    const haste = document.getElementById("haste").value;
+    const reinVal = rein.find(e => e[0] === document.getElementById("rein").value)[1];
+    const mul = document.getElementById("mul").checked;
+
+    let reinforcement = reinVal[0];
+    const block = getBlock(blockName);
+    const correctMaterial = canBreak(toolMaterial, block.material);
+    const correctType = isCorrectTool(block.tool, toolValue);
+
+    // disable certain fields if the block does not require a tool
+    disable(!block.tool);
+
+    let toolDamage;
+    if (correctType && block.tool !== undefined) {
+        toolDamage = materials.find(e => e[0] === document.getElementById("material").value)[1];
+        if (efficiency > 0) {
+            toolDamage += (efficiency * efficiency) + 1;
+        }
+    } else {
+        toolDamage = 1;
+    }
+    const damage = toolDamage * (1 + (haste * 0.2));
+    let ticks = ((block.hardness * (correctType && correctMaterial ? 30 : 100)) / damage);
+
+    const instant = ticks <= 1;
+    ticks = Math.ceil(ticks);
+
+    if (reinVal[1] && reinVal[1].has(blockName) && mul) {
+        console.log(reinVal[1].get(blockName));
+        reinforcement *= reinVal[1].get(blockName);
+        reinforcement = Math.max(reinforcement, 1);
+    }
+
+    ticks *= reinforcement;
+
+    if (!instant) {
+        ticks +=  (reinforcement - 1) * 5
+    }
+
+    ticks = Math.ceil(ticks);
+    updateResult(ticks, ticks / 20);
+}
+
+function updateResult(ticks, seconds) {
+    const result = document.getElementById("result");
+    result.innerHTML = "";
+    if (seconds < 3600) {
+        result.innerHTML += plural(round(seconds), "second", "s");
+    }
+    if (seconds >= 60 && seconds < 86400) {
+        result.innerHTML += plural(round(seconds / 60), "minute", "s");
+    }
+    if (seconds >= 3600) {
+        result.innerHTML += plural(round(seconds / 3600), "hour", "s");
+    }
+    if (seconds >= 86400) {
+        result.innerHTML += plural(round(seconds / 86400), "day", "s");
+    }
+    if (ticks > 1) {
+        result.innerHTML += "<small>" + ticks + " ticks</small>";
+    }
+}
+
+function round(amount) {
+    if (amount === 0.05) {
+        return "Instant";
+    }
+    return Math.round(amount * 10) / 10;
+}
+
+function plural(amount, sing, add) {
+    if (amount === "Instant") {
+        return "<span>" + amount + "</span>";
+    } else if (amount === 1) {
+        return "<span>" + amount + " " + sing + "</span>";
+    } else {
+        return "<span>" + amount + " " + sing + add + "</span>";
+    }
+}
+
+function setValue(elem, value) {
+    const oldValue = elem.value;
+    elem.value = value;
+    if (elem.value === "") {
+        elem.value = oldValue;
+    }
+}
+
+function disable(disable) {
+    dd("tool_axe", disable);
+    dd("tool_pickaxe", disable);
+    dd("material", disable);
+    dd("eff", disable);
+    // dd("haste", disable);
+}
+
+function dd(id, dis) {
+    document.getElementById(id).disabled = !!dis;
+}
+
+
+const max = [blocks.length, 2, materials.length, rein.length, 6, 3, 2];
+window.onhashchange = function () {
+   /* window.location.hash.substr(1).split(",").forEach(function (item) {
+        if (item.includes("=")) {
+            const parts = item.split("=");
+            if (parts[0] === "type") {
+                setValue(document.getElementById("block_type"), parts[1]);
+            } else if (parts[0] === "tool") {
+                document.getElementById("tool_pickaxe").checked = parts[1] === "pickaxe";
+                document.getElementById("tool_axe").checked = parts[1] === "axe";
+            } else if (parts[0] === "mat") {
+                setValue(document.getElementById("material"), parts[1]);
+            } else if (parts[0] === "rein") {
+                setValue(document.getElementById("rein"), parts[1]);
+            } else if (parts[0] === "eff") {
+                setValue(document.getElementById("eff"), parts[1]);
+            } else if (parts[0] === "ha") {
+                setValue(document.getElementById("haste"), parts[1]);
+            } else if (parts[0] === "mul") {
+                document.getElementById("mul").checked = parts[1] === "1";
+            }
+        }
+    });*/
+   let hash = bton(window.location.hash.substr(1));
+   let [idxBlockType, idxTool, idxMaterial, idxRein, idxEff, idxHaste, idxMul] = deserializeHash(hash, max);
+
+   setValue(document.getElementById("block_type"), blocks[idxBlockType].block);
+
+   document.getElementById("tool_pickaxe").checked = idxTool === 0;
+   document.getElementById("tool_axe").checked = idxTool === 1;
+
+   setValue(document.getElementById("material"), materials[idxMaterial][0]);
+
+   setValue(document.getElementById("rein"), rein[idxRein][0]);
+
+   setValue(document.getElementById("eff"), idxEff);
+
+   setValue(document.getElementById("haste"), idxHaste);
+
+   document.getElementById("mul").checked = idxMul ? 1 : 0;
+
+   console.log("hash = " + hash + ", idxBlockType = " + idxBlockType + ", idxTool = " + idxTool + ", idxMaterial = " + idxMaterial + ", idxRein = " + idxRein + ", idxEff = " + idxEff + ", idxHaste = " + idxHaste + ", idxMul = " + idxMul);
+
+
+    onClick();
+};
+
+function deserializeHash(hash, bases) {
+    let arr = [];
+    for (let i = 0; i < bases.length; i++) {
+        arr.push(hash % bases[i]);
+        hash = Math.floor(hash / bases[i]);
+    }
+    console.log("Remaining (should be 0): " + hash);
+    return arr;
+}
+
+function updateHash() {
+    let idxBlockType = blocks.findIndex(e => e.block === document.getElementById("block_type").value);
+    let idxTool = document.getElementById("tool_axe").checked ? 1 : 0;
+    let idxMaterial = materials.findIndex(e => e[0] === document.getElementById("material").value);
+    let idxRein = rein.findIndex(e => e[0] === document.getElementById("rein").value);
+    let idxEff = parseInt(document.getElementById("eff").value);
+    let idxHaste = parseInt(document.getElementById("haste").value);
+    let idxMul = document.getElementById("mul").checked ? 1 : 0;
+
+    let idx = [idxBlockType, idxTool, idxMaterial, idxRein, idxEff, idxHaste, idxMul];
+
+    let result = 0;
+    let multiplier = 1;
+    for (let i = 0; i < idx.length; i++) {
+        result += idx[i] * multiplier;
+        multiplier *= max[i];
+    }
+    console.log("Serialized: " + result);
+
+    window.location.hash = ntob(result);
+}
+
+document.addEventListener('DOMContentLoaded', window.onhashchange, false);
+</script>
